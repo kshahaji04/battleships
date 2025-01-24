@@ -14,17 +14,13 @@ pipeline {
                 }
             }
         }
-        stage('Build Docker Image in Minikube') {
+        stage('Build Docker Image') {
             steps {
                 script {
-                    // Use Minikube’s Docker environment
-                    sh 'eval $(minikube docker-env)'
-
-                    // Navigate to the project directory and build the Docker image inside Minikube
-                    sh "docker build -t ${IMAGE_TAG} ."
-
-                    // Verify image is built inside Minikube
-                    sh "docker images | grep battleships"
+                    // Navigate to the project directory and build the Docker image with a new tag
+                    dir('') {
+                        sh "docker build -t ${IMAGE_TAG} ."
+                    }
                 }
             }
         }
@@ -33,8 +29,8 @@ pipeline {
                 script {
                     // Update deployment.yaml to use the new image tag
                     sh "sed -i 's|image: battleships|image: battleships:${BUILD_NUMBER}|' /var/lib/jenkins/workspace/battleships/deployment.yaml"
-
-                    // Apply Deployment and Service configurations
+        
+                    // Apply both Deployment and Service configurations to Minikube
                     sh 'kubectl apply -f /var/lib/jenkins/workspace/battleships/deployment.yaml'
                     sh 'kubectl apply -f /var/lib/jenkins/workspace/battleships/service.yaml'
 
