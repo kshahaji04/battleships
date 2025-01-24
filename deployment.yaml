@@ -1,20 +1,25 @@
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: battleships
-spec:
-  replicas: 2
-  selector:
-    matchLabels:
-      app: battleships
-  template:
-    metadata:
-      labels:
-        app: battleships
-    spec:
-      containers:
-      - name: battleships
-        image: battleships  # Example Jenkins build number
-        imagePullPolicy: Never  # Ensures Kubernetes uses the locally built image
-        ports:
-        - containerPort: 3000
+pipeline {
+    agent any
+    environment {
+        DOCKER_IMAGE = "battleships"
+        BUILD_TAG = "${BUILD_NUMBER}"
+    }
+    stages {
+        stage('Set Minikube Docker Daemon') {
+            steps {
+                sh 'eval $(minikube docker-env)'  // Use Minikube's Docker daemon
+            }
+        }
+        stage('Build Docker Image') {
+            steps {
+                sh "docker build -t ${DOCKER_IMAGE}:${BUILD_TAG} ."
+                sh "docker tag ${DOCKER_IMAGE}:${BUILD_TAG} ${DOCKER_IMAGE}:latest"  // Optional: Use "latest"
+            }
+        }
+        stage('Apply Kubernetes Deployment') {
+            steps {
+                sh 'kubectl apply -f battleships-deployment.yaml'
+            }
+        }
+    }
+}
