@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: nodejs-shopping
+  name: battleships
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app: nodejs-shopping
+      app: battleships
   template:
     metadata:
       labels:
-        app: nodejs-shopping
+        app: battleships
     spec:
       containers:
-      - name: nodejs-shopping
-        image: nodejs-shopping  # Example Jenkins build number
+      - name: battleships
+        image: battleships  # Example Jenkins build number
         imagePullPolicy: Never  # Ensures Kubernetes uses the locally built image
         ports:
         - containerPort: 3000
