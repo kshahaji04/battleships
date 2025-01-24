@@ -15,6 +15,5 @@ spec:
       containers:
       - name: battleships
         image: battleships  # Example Jenkins build number
-        imagePullPolicy: Never  # Ensures Kubernetes uses the locally built image
         ports:
         - containerPort: 3000
