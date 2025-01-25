@@ -14,6 +14,6 @@ spec:
     spec:
       containers:
       - name: battleships
-        image: battleships:  # Example Jenkins build number
+        image: battleships  # Example Jenkins build number
         ports:
         - containerPort: 3000
